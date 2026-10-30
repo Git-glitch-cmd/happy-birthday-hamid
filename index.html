@@ -129,7 +129,6 @@
 <footer>Made with 💜 for your birthday</footer>
 
 <script>
-  // twinkling stars
   for (let i = 0; i < 60; i++) {
     const s = document.createElement('div');
     s.className = 'star';
@@ -138,8 +137,6 @@
     s.style.animationDelay = (Math.random() * 2) + 's';
     document.body.appendChild(s);
   }
-
-  // floating balloons
   const balloonColors = [
     ['#ff9ec7','#ff2e7e'], ['#9ed8ff','#2e9dff'], ['#fff3a3','#ffcf2e'],
     ['#c9a8ff','#8a4dff'], ['#a8ffc9','#2ecc71'], ['#ffc9a8','#ff7b2e'],
@@ -155,8 +152,6 @@
     b.style.animationDuration = (8 + (i % 3) * 2) + 's';
     document.body.appendChild(b);
   });
-
-  // confetti
   const confettiColors = ['#ff6b9d','#ffd93d','#6bcbff','#9d6bff','#7dff9b','#ff9d6b','#ffffff'];
   function dropConfetti(n) {
     for (let i = 0; i < n; i++) {
@@ -171,16 +166,12 @@
       setTimeout(() => p.remove(), 6000);
     }
   }
-  dropConfetti(80); // shuru mein confetti
-  setInterval(() => dropConfetti(25), 5000); // har 5 sec thodi aur
-
-  // wish button -> confetti burst + message
+  dropConfetti(80);
+  setInterval(() => dropConfetti(25), 5000);
   document.getElementById('wishBtn').addEventListener('click', () => {
     dropConfetti(150);
     document.getElementById('wishMsg').classList.add('show');
   });
-
-  // cake click -> candles blow out / relight
   let lit = true;
   document.getElementById('cake').addEventListener('click', () => {
     lit = !lit;
@@ -190,9 +181,7 @@
     if (!lit) dropConfetti(40);
   });
 </script>
- <!-- ===== Extra Surprises for Hamid ===== -->
 <style>
-/* Extras ka design — purani file bilkul nahi cherni */
 #hb-extras{ text-align:center; margin:30px auto; padding:10px; }
 #hb-type{ font-size:clamp(20px,4vw,32px); font-weight:bold; color:#ffd166; min-height:1.4em; text-shadow:0 2px 10px rgba(0,0,0,.45); }
 #hb-type::after{ content:'|'; margin-left:2px; animation:hbBlink .8s infinite; }
@@ -227,7 +216,6 @@
 </div>
 
 <script>
-// 1) Typewriter wish — message akshar akshar type hoga
 const hbMsg = "Wishing you a day full of happiness, laughter and cake! 🎂";
 const hbTypeEl = document.getElementById('hb-type');
 const hbChars = Array.from(hbMsg);
@@ -236,14 +224,10 @@ function hbType(){
   if(hbI <= hbChars.length){ hbTypeEl.textContent = hbChars.slice(0, hbI).join(''); hbI++; setTimeout(hbType, 55); }
 }
 setTimeout(hbType, 600);
-
-// 2) Letter kholna / band karna
 const hbModal = document.getElementById('hb-letterModal');
 document.getElementById('hb-openLetter').addEventListener('click', () => hbModal.classList.add('open'));
 document.getElementById('hb-closeLetter').addEventListener('click', () => hbModal.classList.remove('open'));
 hbModal.addEventListener('click', e => { if(e.target === hbModal) hbModal.classList.remove('open'); });
-
-// 3) Fireworks — screen par jahan click, wahan aatishbaazi
 const hbCvs = document.getElementById('hb-fw');
 const hbCtx = hbCvs.getContext('2d');
 function hbSize(){ hbCvs.width = innerWidth; hbCvs.height = innerHeight; }
@@ -273,27 +257,37 @@ document.addEventListener('click', e => {
   hbCtx.globalAlpha = 1;
   requestAnimationFrame(hbTick);
 })();
-// Page khulte hi welcome fireworks
 setTimeout(() => { hbLaunch(innerWidth*0.3, innerHeight*0.32); hbLaunch(innerWidth*0.7, innerHeight*0.28); }, 900);
-
-// 4) Music — Happy Birthday ki dhun (bina kisi file ke)
 let hbCtxA = null, hbMaster = null, hbPlaying = false, hbTimer = null;
 const hbBtn = document.getElementById('hb-musicBtn');
-const hbSong = [[392,.75],[392,.25],[440,1],[392,1],[523,1],[494,1.75],[392,.75],[392,.25],[440,1],[392,1],[587,1],[523,1.75],[392,.75],[392,.25],[784,1],[659,1],[523,1],[494,1],[440,1.75],[698,.75],[698,.25],[659,1],[523,1],[587,1],[523,2]];
-function hbNote(freq, t, dur){
+const hbSong = [[392,330,.75],[392,330,.25],[440,349,1],[392,330,1],[523,440,1],[494,392,1.75],[392,330,.75],[392,330,.25],[440,349,1],[392,330,1],[587,494,1],[523,440,1.75],[392,330,.75],[392,330,.25],[784,659,1],[659,523,1],[523,440,1],[494,392,1],[440,349,1.75],[698,587,.75],[698,587,.25],[659,523,1],[523,440,1],[587,494,1],[523,330,2]];
+function hbNote2(freq, t, dur, vol){
   const o = hbCtxA.createOscillator(), g = hbCtxA.createGain();
-  o.type = 'triangle'; o.frequency.value = freq;
+  o.type = 'sine'; o.frequency.value = freq;
+  const ring = Math.max(dur, 0.6);
   g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(0.22, t + 0.03);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + ring);
   o.connect(g); g.connect(hbMaster);
-  o.start(t); o.stop(t + dur + 0.05);
+  o.start(t); o.stop(t + ring + 0.05);
+  const o2 = hbCtxA.createOscillator(), g2 = hbCtxA.createGain();
+  o2.type = 'sine'; o2.frequency.value = freq * 2;
+  g2.gain.setValueAtTime(0.0001, t);
+  g2.gain.exponentialRampToValueAtTime(vol * 0.25, t + 0.01);
+  g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+  o2.connect(g2); g2.connect(hbMaster);
+  o2.start(t); o2.stop(t + 0.4);
 }
 function hbPlaySong(){
   if(!hbPlaying) return;
   let t = hbCtxA.currentTime + 0.06;
-  for(const pair of hbSong){ const dur = pair[1]*0.42; hbNote(pair[0], t, dur*0.95); t += dur; }
-  hbTimer = setTimeout(hbPlaySong, (t - hbCtxA.currentTime)*1000 + 400);
+  for(const n of hbSong){
+    const dur = n[2] * 0.40;
+    hbNote2(n[0], t, dur * 0.95, 0.20);
+    hbNote2(n[1], t, dur * 0.95, 0.10);
+    t += dur;
+  }
+  hbTimer = setTimeout(hbPlaySong, (t - hbCtxA.currentTime) * 1000 + 500);
 }
 hbBtn.addEventListener('click', () => {
   if(!hbPlaying){
@@ -308,6 +302,7 @@ hbBtn.addEventListener('click', () => {
   }
 });
 </script>
+
 
 </body>
 </html>
